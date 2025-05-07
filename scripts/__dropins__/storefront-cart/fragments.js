@@ -93,17 +93,6 @@ const e=`
         value
         currency
       }
-      price_including_tax {
-        value
-        currency
-      }
-      fixed_product_taxes {
-        amount {
-          value
-          currency
-        }
-        label
-      }
       original_item_price {
         value
         currency
