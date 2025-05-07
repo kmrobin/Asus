@@ -367,6 +367,10 @@ export function getConsent(topic) {
   return true;
 }
 
+export function jsx(html, ...args) {
+  return html.slice(1).reduce((str, elem, i) => str + args[i] + elem, html[0]);
+}
+
 async function loadPage() {
   await loadEager(document);
   await loadLazy(document);
