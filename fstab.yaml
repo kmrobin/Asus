@@ -1,5 +1,5 @@
 mountpoints:
-  /: https://adobe.sharepoint.com/:f:/r/sites/eds-dsc/Shared%20Documents/asus
+  /: https://adobe.sharepoint.com/:f:/r/sites/hol/Shared%20Documents/DemoPOC/asus
 
 folders:
   /products/: /products/default
