@@ -20,7 +20,7 @@ import { getHeaders } from '../configs.js';
 import { fetchPlaceholders } from '../aem.js';
 
 export const IMAGES_SIZES = {
-  width: 450,
+  width: 550,
   height: 550,
 };
 
