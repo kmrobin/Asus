@@ -1,3 +1,9 @@
+
+
+.commerce-checkout {
+  min-height: 2500px;
+}
+
 /* stylelint-disable selector-class-pattern */
 .checkout__content {
   display: grid;
