@@ -2,6 +2,7 @@
 
 .commerce-cart {
   padding: var(--spacing-large) 0;
+  min-height: 800px;
 }
 
 .cart__wrapper {
