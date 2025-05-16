@@ -132,7 +132,7 @@ const onHeaderLinkClick = (element) => {
   document.body.style.overflow = 'hidden';
   viewportMeta.setAttribute(
     'content',
-    'width=device-width, initial-scale=1.0, maximum-scale=1.0',
+    'width=device-width, initial-scale=1.0, maximum-scale=5.0',
   );
 
   signInModal.setAttribute('id', 'auth-combine-modal');
