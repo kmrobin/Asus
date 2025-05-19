@@ -20,8 +20,8 @@ import { getHeaders } from '../configs.js';
 import { fetchPlaceholders } from '../aem.js';
 
 export const IMAGES_SIZES = {
-  width: 550,
-  height: 550,
+  width: 450,
+  height: 450,
 };
 
 await initializeDropin(async () => {
