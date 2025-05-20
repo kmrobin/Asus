@@ -27,8 +27,8 @@ export const IMAGES_SIZES = {
     height: 200,
   },
   desktop: {
-    width: 450,
-    height: 450,
+    width: 550,
+    height: 550,
   }
 };
 
@@ -83,9 +83,10 @@ async function preloadImageMiddleware(data) {
   if (image) {
     await UI.render(Image, {
       src: image,
-      ...IMAGES_SIZES.mobile,
+      ...IMAGES_SIZES,
       params: {
-        ...IMAGES_SIZES,
+        ...IMAGES_SIZES.mobile,
+        ...IMAGES_SIZES.desktop
       },
       loading: 'eager',
     })(document.createElement('div'));
