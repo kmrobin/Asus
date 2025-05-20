@@ -22,6 +22,14 @@ import { fetchPlaceholders } from '../aem.js';
 export const IMAGES_SIZES = {
   width: 450,
   height: 450,
+  mobile: {
+    width: 200,
+    height: 200,
+  },
+  desktop: {
+    width: 450,
+    height: 450,
+  }
 };
 
 await initializeDropin(async () => {
