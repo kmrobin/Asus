@@ -99,7 +99,7 @@ export default async function decorate(block) {
       gap: 'small',
       loop: false,
       imageParams: {
-        ...IMAGES_SIZES,
+        ...IMAGES_SIZES.mobile,
       },
     })($galleryMobile),
 
@@ -111,7 +111,7 @@ export default async function decorate(block) {
       gap: 'small',
       loop: false,
       imageParams: {
-        ...IMAGES_SIZES,
+        ...IMAGES_SIZES.desktop,
       },
     })($gallery),
 

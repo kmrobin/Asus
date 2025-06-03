@@ -23,12 +23,12 @@ export const IMAGES_SIZES = {
   width: 450,
   height: 450,
   mobile: {
-    width: 200,
-    height: 200,
+    width: 275,
+    height: 275,
   },
   desktop: {
-    width: 550,
-    height: 550,
+    width: 440,
+    height: 440,
   }
 };
 
