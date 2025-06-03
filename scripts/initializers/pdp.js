@@ -45,6 +45,7 @@ await initializeDropin(async () => {
   const sku = getSkuFromUrl();
   const optionsUIDs = getOptionsUIDsFromUrl();
 
+  // Preload first product image before fetching other data
   const [product, labels] = await Promise.all([
     fetchProductData(sku, { optionsUIDs, skipTransform: true }).then(preloadImageMiddleware),
     fetchPlaceholders(),
@@ -81,15 +82,29 @@ async function preloadImageMiddleware(data) {
   const image = data?.images?.[0]?.url?.replace(/^https?:/, '');
 
   if (image) {
+    // Add preload link to head for critical first image
+    const preloadLink = document.createElement('link');
+    preloadLink.rel = 'preload';
+    preloadLink.as = 'image';
+    preloadLink.href = image;
+    preloadLink.imageSrcset = `${image}?width=${IMAGES_SIZES.mobile.width}&height=${IMAGES_SIZES.mobile.height} 300w, ${image}?width=${IMAGES_SIZES.desktop.width}&height=${IMAGES_SIZES.desktop.height} 450w`;
+    preloadLink.imageSizes = '(max-width: 767px) 300px, 450px';
+    document.head.appendChild(preloadLink);
+
+    // Render image with optimized parameters
     await UI.render(Image, {
       src: image,
       ...IMAGES_SIZES,
       params: {
         ...IMAGES_SIZES.mobile,
-        ...IMAGES_SIZES.desktop
+        ...IMAGES_SIZES.desktop,
+        format: 'webp', // Use modern image format
+        quality: 85 // Optimize quality vs size
       },
       loading: 'eager',
       fetchpriority: 'high',
+      decoding: 'async',
+      sizes: '(max-width: 767px) 300px, 450px',
     })(document.createElement('div'));
   }
   return data;

@@ -77,6 +77,15 @@ export default async function decorate(block) {
   // Alert
   let inlineAlert = null;
 
+  // Preload first product image
+  if (product?.images?.[0]?.url) {
+    const link = document.createElement('link');
+    link.rel = 'preload';
+    link.as = 'image';
+    link.href = product.images[0].url;
+    document.head.appendChild(link);
+  }
+
   // Render Containers
   const [
     _galleryMobile,
@@ -100,6 +109,8 @@ export default async function decorate(block) {
       loop: false,
       imageParams: {
         ...IMAGES_SIZES.mobile,
+        loading: 'eager',
+        fetchpriority: 'high'
       },
     })($galleryMobile),
 
@@ -112,6 +123,8 @@ export default async function decorate(block) {
       loop: false,
       imageParams: {
         ...IMAGES_SIZES.desktop,
+        loading: 'eager',
+        fetchpriority: 'high'
       },
     })($gallery),
 
