@@ -182,7 +182,6 @@ export default async function decorate(block) {
 
           // Scroll the alertWrapper into view
           $alert.scrollIntoView({
-            behavior: 'smooth',
             block: 'center',
           });
         } finally {
