@@ -23,12 +23,12 @@ export const IMAGES_SIZES = {
   width: 450,
   height: 450,
   mobile: {
-    width: 275,
-    height: 275,
+    width: 300,
+    height: 300,
   },
   desktop: {
-    width: 440,
-    height: 440,
+    width: 450,
+    height: 450,
   }
 };
 
@@ -89,6 +89,7 @@ async function preloadImageMiddleware(data) {
         ...IMAGES_SIZES.desktop
       },
       loading: 'eager',
+      fetchpriority: 'high',
     })(document.createElement('div'));
   }
   return data;
