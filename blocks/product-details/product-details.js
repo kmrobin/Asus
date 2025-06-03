@@ -108,9 +108,7 @@ export default async function decorate(block) {
       gap: 'small',
       loop: false,
       imageParams: {
-        ...IMAGES_SIZES.mobile,
-        loading: 'eager',
-        fetchpriority: 'high'
+        ...IMAGES_SIZES.mobile
       },
     })($galleryMobile),
 
@@ -122,9 +120,7 @@ export default async function decorate(block) {
       gap: 'small',
       loop: false,
       imageParams: {
-        ...IMAGES_SIZES.desktop,
-        loading: 'eager',
-        fetchpriority: 'high'
+        ...IMAGES_SIZES.desktop
       },
     })($gallery),
 
@@ -182,6 +178,7 @@ export default async function decorate(block) {
 
           // Scroll the alertWrapper into view
           $alert.scrollIntoView({
+            behavior: 'instant',
             block: 'center',
           });
         } finally {
