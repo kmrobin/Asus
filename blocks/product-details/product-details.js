@@ -98,6 +98,7 @@ export default async function decorate(block) {
       peak: false,
       gap: 'small',
       loop: false,
+      fetchPriority: 'high',
       imageParams: {
         ...IMAGES_SIZES.mobile,
       },
@@ -110,6 +111,7 @@ export default async function decorate(block) {
       peak: true,
       gap: 'small',
       loop: false,
+      fetchPriority: 'high',
       imageParams: {
         ...IMAGES_SIZES.desktop,
       },
