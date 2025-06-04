@@ -100,9 +100,9 @@ export default async function decorate(block) {
       loop: false,
       imageParams: {
         ...IMAGES_SIZES.mobile,
-        fetchpriority: 'low',
+        fetchpriority: 'high',
       },
-      isDiscoverable: false
+      isDiscoverable: true
     })($galleryMobile),
 
     // Gallery (Desktop)
@@ -114,9 +114,9 @@ export default async function decorate(block) {
       loop: false,
       imageParams: {
         ...IMAGES_SIZES.desktop,
-        fetchpriority: 'low',
+        fetchpriority: 'high',
       },
-      isDiscoverable: false
+      isDiscoverable: true
     })($gallery),
 
     // Header
