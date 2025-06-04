@@ -200,13 +200,10 @@ export default async function decorate(block) {
             },
           })($alert);
 
-          // Use transform for smooth scrolling to prevent layout shifts
-          requestAnimationFrame(() => {
-            const alertTop = $alert.getBoundingClientRect().top + window.pageYOffset;
-            window.scrollTo({
-              top: alertTop - (window.innerHeight / 2),
-              behavior: 'smooth'
-            });
+          // Scroll the alertWrapper into view
+          $alert.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center',
           });
         } finally {
           addToCart.setProps((prev) => ({

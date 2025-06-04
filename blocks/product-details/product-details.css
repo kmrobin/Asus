@@ -78,9 +78,14 @@
   margin-top: var(--spacing-xsmall);
 }
 
+.product-details .product-details__short-description {
+  min-height: 30px;
+}
+
 .product-details p {
   min-height: 30px;
   font-size: 16px;
+  margin: 0;
 }
 
 
