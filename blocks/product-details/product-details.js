@@ -41,6 +41,14 @@ function preloadLcpImage(product) {
   preloadContainer.style.display = 'none';
   header.appendChild(preloadContainer);
 
+  // Create link preload for LCP image
+  const preloadLink = document.createElement('link');
+  preloadLink.rel = 'preload';
+  preloadLink.as = 'image';
+  preloadLink.href = lcpImage;
+  preloadLink.fetchPriority = 'high';
+  document.head.appendChild(preloadLink);
+
   UI.render(Image, {
     src: lcpImage,
     ...IMAGES_SIZES,
