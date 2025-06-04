@@ -78,6 +78,11 @@
   margin-top: var(--spacing-xsmall);
 }
 
+.product-details p {
+  min-height: 30px;
+}
+
+
 @media (width >= 900px) {
   .product-details__wrapper {
     grid-template-columns: repeat(var(--grid-3-columns), 1fr);

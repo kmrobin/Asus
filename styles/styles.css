@@ -414,6 +414,13 @@ main img {
   width: 100%;
 }
 
+.metadata-container {
+  height: 0;
+  display: none;
+}
+
+
+
 /* sections */
 main > .section {
   margin: var(--spacing-xbig) 0;
