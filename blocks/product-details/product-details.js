@@ -4,6 +4,7 @@ import {
   InLineAlert,
   Icon,
   Button,
+  Image,
   provider as UI,
 } from '@dropins/tools/components.js';
 import { events } from '@dropins/tools/event-bus.js';
@@ -28,10 +29,38 @@ import { fetchPlaceholders } from '../../scripts/aem.js';
 import { IMAGES_SIZES } from '../../scripts/initializers/pdp.js';
 import '../../scripts/initializers/cart.js';
 
+// Preload LCP image
+function preloadLcpImage(product) {
+  if (!product?.images?.length) return;
+  
+  const lcpImage = product.images[0].url;
+  const header = document.querySelector('header');
+  if (!header || !lcpImage) return;
+
+  const preloadContainer = document.createElement('div');
+  preloadContainer.style.display = 'none';
+  header.appendChild(preloadContainer);
+
+  UI.render(Image, {
+    src: lcpImage,
+    ...IMAGES_SIZES,
+    params: {
+      ...IMAGES_SIZES.mobile,
+      ...IMAGES_SIZES.desktop
+    },
+    loading: 'eager',
+    fetchpriority: 'high',
+    isDiscoverable: true
+  })(preloadContainer);
+}
+
 export default async function decorate(block) {
   // eslint-disable-next-line no-underscore-dangle
   const product = events._lastEvent?.['pdp/data']?.payload ?? null;
   const labels = await fetchPlaceholders();
+
+  // Preload LCP image in header
+  preloadLcpImage(product);
 
   // Layout
   const fragment = document.createRange().createContextualFragment(`
