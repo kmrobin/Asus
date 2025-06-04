@@ -200,10 +200,13 @@ export default async function decorate(block) {
             },
           })($alert);
 
-          // Scroll the alertWrapper into view
-          $alert.scrollIntoView({
-            behavior: 'smooth',
-            block: 'center',
+          // Use transform for smooth scrolling to prevent layout shifts
+          requestAnimationFrame(() => {
+            const alertTop = $alert.getBoundingClientRect().top + window.pageYOffset;
+            window.scrollTo({
+              top: alertTop - (window.innerHeight / 2),
+              behavior: 'smooth'
+            });
           });
         } finally {
           addToCart.setProps((prev) => ({
