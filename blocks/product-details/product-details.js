@@ -130,6 +130,7 @@ export default async function decorate(block) {
       imageParams: {
         ...IMAGES_SIZES.mobile,
         fetchpriority: 'high',
+        loading: 'eager',
       },
       isDiscoverable: true
     })($galleryMobile),
@@ -144,6 +145,7 @@ export default async function decorate(block) {
       imageParams: {
         ...IMAGES_SIZES.desktop,
         fetchpriority: 'high',
+        loading: 'eager',
       },
       isDiscoverable: true
     })($gallery),
