@@ -418,6 +418,10 @@ main img {
   height: 0;
   display: none;
 }
+.metadata-container p {
+  height: 24px;
+  font-size: 16px;
+}
 
 
 
