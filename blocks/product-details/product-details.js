@@ -93,14 +93,16 @@ export default async function decorate(block) {
   ] = await Promise.all([
     // Gallery (Mobile)
     pdpRendered.render(ProductGallery, {
-      controls: 'dots',
+      controls: 'dots', 
       arrows: true,
       peak: false,
       gap: 'small',
       loop: false,
       imageParams: {
         ...IMAGES_SIZES.mobile,
+        fetchpriority: 'high',
       },
+      isDiscoverable: true
     })($galleryMobile),
 
     // Gallery (Desktop)
@@ -108,11 +110,13 @@ export default async function decorate(block) {
       controls: 'thumbnailsColumn',
       arrows: true,
       peak: true,
-      gap: 'small',
+      gap: 'small', 
       loop: false,
       imageParams: {
         ...IMAGES_SIZES.desktop,
+        fetchpriority: 'high',
       },
+      isDiscoverable: true
     })($gallery),
 
     // Header
