@@ -221,7 +221,7 @@ export async function loadErrorPage(code = 404) {
   if (code === 404) {
     const metaRobots = document.createElement('meta');
     metaRobots.name = 'robots';
-    metaRobots.content = 'ALL';
+    metaRobots.content = 'noindex';
     document.head.appendChild(metaRobots);
   }
 
