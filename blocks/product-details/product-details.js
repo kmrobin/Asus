@@ -129,6 +129,7 @@ export default async function decorate(block) {
       loop: false,
       imageParams: {
         ...IMAGES_SIZES.mobile,
+        format: 'auto',
         fetchpriority: 'high',
       },
       isDiscoverable: true
