@@ -130,7 +130,7 @@ export default async function decorate(block) {
       loop: false,
       imageParams: {
         ...IMAGES_SIZES.mobile,
-        format: 'auto',
+        format: 'avif',
         fetchpriority: 'high',
       },
       isDiscoverable: true
@@ -145,7 +145,7 @@ export default async function decorate(block) {
       loop: false,
       imageParams: {
         ...IMAGES_SIZES.desktop,
-        format: 'auto',
+        format: 'avif',
         fetchpriority: 'high',
       },
       isDiscoverable: true
