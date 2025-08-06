@@ -90,6 +90,7 @@ async function preloadImageMiddleware(data) {
       },
       loading: 'eager',
       fetchpriority: 'high',
+      format:'auto',
       isDiscoverable: true
     })(document.createElement('div'));
   }
