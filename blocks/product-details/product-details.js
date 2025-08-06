@@ -49,6 +49,7 @@ function preloadLcpImage(product) {
       ...IMAGES_SIZES.desktop
     },
     loading: 'eager',
+    format:'auto',
     fetchpriority: 'high',
     isDiscoverable: true
   })(preloadContainer);
