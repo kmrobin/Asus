@@ -49,6 +49,7 @@ function preloadLcpImage(product) {
       ...IMAGES_SIZES.desktop
     },
     loading: 'eager',
+    format: 'auto',
     fetchpriority: 'high',
     isDiscoverable: true
   })(preloadContainer);
@@ -144,6 +145,7 @@ export default async function decorate(block) {
       loop: false,
       imageParams: {
         ...IMAGES_SIZES.desktop,
+        format: 'auto',
         fetchpriority: 'high',
       },
       isDiscoverable: true
