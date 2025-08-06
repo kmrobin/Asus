@@ -50,6 +50,7 @@ function preloadLcpImage(product) {
     },
     loading: 'eager',
     fetchpriority: 'high',
+    format:'auto',
     isDiscoverable: true
   })(preloadContainer);
 }
