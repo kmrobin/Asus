@@ -89,8 +89,8 @@ async function preloadImageMiddleware(data) {
         ...IMAGES_SIZES.desktop
       },
       loading: 'eager',
-      fetchpriority: 'high',
       format:'auto',
+      fetchpriority: 'high',
       isDiscoverable: true
     })(document.createElement('div'));
   }
