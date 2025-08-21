@@ -45,8 +45,7 @@ function preloadLcpImage(product) {
     src: lcpImage,
     ...IMAGES_SIZES,
     params: {
-      ...IMAGES_SIZES.mobile,
-      ...IMAGES_SIZES.desktop
+      ...IMAGES_SIZES.mobile
     },
     loading: 'lazy',
     format: 'auto',
