@@ -45,8 +45,7 @@ function preloadLcpImage(product) {
     src: lcpImage,
     ...IMAGES_SIZES,
     params: {
-      ...IMAGES_SIZES.mobile,
-      ...IMAGES_SIZES.desktop
+      ...IMAGES_SIZES.mobile
     },
     loading: 'lazy',
     format: 'auto',
@@ -129,11 +128,8 @@ export default async function decorate(block) {
       gap: 'small',
       loop: false,
       imageParams: {
-        ...IMAGES_SIZES.mobile,
-        format: 'auto',
-        fetchpriority: 'high',
-      },
-      isDiscoverable: true
+        ...IMAGES_SIZES.mobile
+      }
     })($galleryMobile),
 
     // Gallery (Desktop)
@@ -144,11 +140,8 @@ export default async function decorate(block) {
       gap: 'small', 
       loop: false,
       imageParams: {
-        ...IMAGES_SIZES.desktop,
-        format: 'auto',
-        fetchpriority: 'high',
-      },
-      isDiscoverable: true
+        ...IMAGES_SIZES.mobile
+      }
     })($gallery),
 
     // Header
