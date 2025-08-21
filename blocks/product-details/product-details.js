@@ -128,7 +128,8 @@ export default async function decorate(block) {
       loop: false,
       imageParams: {
         ...IMAGES_SIZES.mobile
-      }
+      },
+      isDiscoverable: true
     })($galleryMobile),
 
     // Gallery (Desktop)
@@ -140,7 +141,7 @@ export default async function decorate(block) {
       loop: false,
       imageParams: {
         ...IMAGES_SIZES.mobile
-      }
+      },isDiscoverable: true
     })($gallery),
 
     // Header
