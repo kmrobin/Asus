@@ -47,6 +47,7 @@ function preloadLcpImage(product) {
     params: {
       ...IMAGES_SIZES.mobile
     },
+    loading: 'eager',
     format: 'auto',
     fetchpriority: 'high',
     isDiscoverable: true
