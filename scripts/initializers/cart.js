@@ -15,5 +15,5 @@ await initializeDropin(async () => {
     },
   };
 
-  return initializers.mountImmediately(initialize, { langDefinitions });
+  // return initializers.mountImmediately(initialize, { langDefinitions });
 })();
