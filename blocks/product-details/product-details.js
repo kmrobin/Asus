@@ -206,17 +206,7 @@ export default async function decorate(block) {
     _attributes,
   ] = await Promise.all([
     // Gallery (Mobile)
-    pdpRendered.render(ProductGallery, {
-      controls: 'dots', 
-      arrows: true,
-      peak: false,
-      gap: 'small',
-      loop: false,
-      imageParams: {
-        ...IMAGES_SIZES.mobile
-      },
-      isDiscoverable: true
-    })($galleryMobile),
+
 
     // Gallery (Desktop)
     pdpRendered.render(ProductGallery, {
