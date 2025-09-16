@@ -67,7 +67,7 @@ export default async function decorate(block) {
     <div class="product-details__wrapper">
       <div class="product-details__alert"></div>
       <div class="product-details__left-column">
-        <div class="product-details__gallery"></div>
+        <div class="product-details__gallery gary-test"></div>
       </div>
       <div class="product-details__right-column">
         <div class="product-details__header"></div>
