@@ -40,10 +40,6 @@ class ProductCard extends Component {
     url.protocol = 'https:';
     url.search = '';
 
-    // 优化：根据图像在页面中的位置确定加载优先级
-    const isLCPImage = this.props.index < 2; // 假设前两个图像是LCP元素
-    const fetchPriority = isLCPImage ? 'high' : 'auto';
-
     return html`<picture>
       <source type="image/webp" srcset="${url}?width=163&bg-color=255,255,255&format=webply&optimize=medium 1x,${url}?width=326&bg-color=255,255,255&format=webply&optimize=medium 2x, ${url}?width=489&bg-color=255,255,255&format=webply&optimize=medium 3x" media="(max-width: 900px)" />
       <source type="image/webp" srcset="${url}?width=330&bg-color=255,255,255&format=webply&optimize=medium 1x, ${url}?width=660&bg-color=255,255,255&format=webply&optimize=medium 2x, ${url}?width=990&bg-color=255,255,255&format=webply&optimize=medium 3x" />

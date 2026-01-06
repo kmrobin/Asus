@@ -31,52 +31,27 @@ import '../../scripts/initializers/cart.js';
 
 // Preload LCP image
 function preloadLcpImage(product) {
-  // if (!product?.images?.length) return;
-  
-  // const lcpImage = product.images[0].url;
-  // const header = document.querySelector('header');
-  // if (!header || !lcpImage) return;
-
-  // const preloadContainer = document.createElement('div');
-  // preloadContainer.style.display = 'none';
-  // header.appendChild(preloadContainer);
-
-  // UI.render(Image, {
-  //   src: lcpImage,
-  //   ...IMAGES_SIZES,
-  //   params: {
-  //     ...IMAGES_SIZES.mobile
-  //   },
-  //   loading: 'eager',
-  //   format: 'auto',
-  //   fetchpriority: 'high',
-  //   isDiscoverable: true
-  // })(preloadContainer);
-  
   if (!product?.images?.length) return;
   
   const lcpImage = product.images[0].url;
-  if (!lcpImage) return;
+  const header = document.querySelector('header');
+  if (!header || !lcpImage) return;
 
-  // 使用更直接的方式预加载关键图像
-  const preloadLink = document.createElement('link');
-  preloadLink.rel = 'preload';
-  preloadLink.as = 'image';
-  preloadLink.href = lcpImage;
-  preloadLink.fetchpriority = 'high';
-  document.head.appendChild(preloadLink);
+  const preloadContainer = document.createElement('div');
+  preloadContainer.style.display = 'none';
+  header.appendChild(preloadContainer);
 
-  // 同时预加载优化后的图像格式
-  const optimizedImageUrl = new URL(lcpImage, window.location);
-  optimizedImageUrl.searchParams.set('format', 'webply');
-  optimizedImageUrl.searchParams.set('optimize', 'medium');
-  
-  const optimizedPreload = document.createElement('link');
-  optimizedPreload.rel = 'preload';
-  optimizedPreload.as = 'image';
-  optimizedPreload.href = optimizedImageUrl.toString();
-  optimizedPreload.fetchpriority = 'high';
-  document.head.appendChild(optimizedPreload);
+  UI.render(Image, {
+    src: lcpImage,
+    ...IMAGES_SIZES,
+    params: {
+      ...IMAGES_SIZES.mobile
+    },
+    loading: 'eager',
+    format: 'auto',
+    fetchpriority: 'high',
+    isDiscoverable: true
+  })(preloadContainer);
 }
 
 export default async function decorate(block) {

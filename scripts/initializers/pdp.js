@@ -81,28 +81,6 @@ async function preloadImageMiddleware(data) {
   const image = data?.images?.[0]?.url?.replace(/^https?:/, '');
 
   if (image) {
-    // 优化：在图像加载前预加载资源
-    const preloadLink = document.createElement('link');
-    preloadLink.rel = 'preload';
-    preloadLink.as = 'image';
-    preloadLink.href = `https:${image}`;
-    preloadLink.fetchpriority = 'high';
-    document.head.appendChild(preloadLink);
-    
-    // 预加载优化后的图像格式
-    const optimizedUrl = new URL(image, window.location);
-    optimizedUrl.searchParams.set('format', 'webply');
-    optimizedUrl.searchParams.set('optimize', 'medium');
-    optimizedUrl.searchParams.set('width', '800');
-    
-    const optimizedPreload = document.createElement('link');
-    optimizedPreload.rel = 'preload';
-    optimizedPreload.as = 'image';
-    optimizedPreload.href = optimizedUrl.toString();
-    optimizedPreload.fetchpriority = 'high';
-    document.head.appendChild(optimizedPreload);
-
-    // 渲染图像组件
     await UI.render(Image, {
       src: image,
       ...IMAGES_SIZES,
@@ -110,21 +88,10 @@ async function preloadImageMiddleware(data) {
         ...IMAGES_SIZES.mobile,
         ...IMAGES_SIZES.desktop
       },
-      loading: 'eager', // 对于LCP图像使用eager
+      loading: 'lazy',
       fetchpriority: 'high',
       isDiscoverable: true
     })(document.createElement('div'));
-    // await UI.render(Image, {
-    //   src: image,
-    //   ...IMAGES_SIZES,
-    //   params: {
-    //     ...IMAGES_SIZES.mobile,
-    //     ...IMAGES_SIZES.desktop
-    //   },
-    //   loading: 'lazy',
-    //   fetchpriority: 'high',
-    //   isDiscoverable: true
-    // })(document.createElement('div'));
   }
   return data;
 }
