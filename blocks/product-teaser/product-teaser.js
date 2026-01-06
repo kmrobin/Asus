@@ -87,7 +87,7 @@ function renderImage(image, size = 250) {
   return document.createRange().createContextualFragment(`<picture>
       <source srcset="${webpUrl}" />
       <source srcset="${jpgUrl}" />
-      <img height="${size}" width="${size}" src="${createUrlForWidth(imageUrl, size, false)}" loading="eager" alt="${label}" />
+      <img height="${size}" width="${size}" src="${createUrlForWidth(imageUrl, size, false)}" loading="lazy" alt="${label}" />
     </picture>
   `);
 }
