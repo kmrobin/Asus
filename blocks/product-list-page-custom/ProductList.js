@@ -43,16 +43,22 @@ class ProductCard extends Component {
     // 优化：根据图像在页面中的位置确定加载优先级
     const isLCPImage = this.props.index < 2; // 假设前两个图像是LCP元素
     const fetchPriority = isLCPImage ? 'high' : 'auto';
-    const imageLoading = this.props.index < 4 ? 'eager' : 'lazy'; // 前4个图像使用eager加载
+    const imageLoading = this.props.index < 2 ? 'eager' : 'lazy'; // 只对前2个图像使用eager加载，避免资源竞争
 
     // 预加载LCP相关的图像
     if (isLCPImage) {
-      const preloadLink = document.createElement('link');
-      preloadLink.rel = 'preload';
-      preloadLink.as = 'image';
-      preloadLink.href = url.toString();
-      preloadLink.fetchpriority = 'high';
-      document.head.appendChild(preloadLink);
+      // 检查图像是否已经预加载
+      const existingPreload = Array.from(document.head.querySelectorAll('link[rel="preload"][as="image"]'))
+        .find(link => link.href === url.toString());
+        
+      if (!existingPreload) {
+        const preloadLink = document.createElement('link');
+        preloadLink.rel = 'preload';
+        preloadLink.as = 'image';
+        preloadLink.href = url.toString();
+        preloadLink.fetchpriority = 'high';
+        document.head.appendChild(preloadLink);
+      }
     }
 
     return html`<picture>
@@ -89,7 +95,7 @@ class ProductCard extends Component {
     }
 
     const isMobile = window.matchMedia('only screen and (max-width: 900px)').matches;
-    const numberOfEagerImages = isMobile ? 2 : 4;
+    const numberOfEagerImages = isMobile ? 2 : 2; // 减少eager加载的图片数量，避免资源竞争
 
     return html`
       <li index=${index} ref=${secondLastProduct}>

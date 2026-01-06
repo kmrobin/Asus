@@ -36,6 +36,14 @@ function preloadLcpImage(product) {
   const lcpImage = product.images[0].url;
   if (!lcpImage) return;
 
+  // 检查图像是否已经预加载
+  const existingPreload = Array.from(document.head.querySelectorAll('link[rel="preload"][as="image"]'))
+    .find(link => link.href === lcpImage);
+    
+  if (existingPreload) {
+    return; // 如果已经预加载则不再重复
+  }
+
   // 使用更直接的方式预加载关键图像
   const preloadLink = document.createElement('link');
   preloadLink.rel = 'preload';
