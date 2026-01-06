@@ -162,6 +162,28 @@ function preloadFile(href, as) {
 }
 
 /**
+ * Optimizes LCP by preloading critical resources and prioritizing LCP elements
+ */
+function optimizeLCP() {
+  // Add resource hints for critical resources
+  const criticalResources = [
+    '/scripts/__dropins__/storefront-pdp/api.js',
+    '/scripts/__dropins__/storefront-pdp/render.js',
+    '/scripts/__dropins__/storefront-pdp/containers/ProductGallery.js',
+    '/scripts/__dropins__/storefront-pdp/containers/ProductHeader.js',
+    '/scripts/__dropins__/storefront-pdp/containers/ProductPrice.js',
+  ];
+
+  criticalResources.forEach((resource) => {
+    const link = document.createElement('link');
+    link.rel = 'preload';
+    link.as = 'script';
+    link.href = resource;
+    document.head.appendChild(link);
+  });
+}
+
+/**
  * Loads everything needed to get to LCP.
  * @param {Element} doc The container element
  */
@@ -249,6 +271,9 @@ async function loadEager(doc) {
 
     // Template Decorations
     await applyTemplates(doc);
+
+    // Optimize LCP before loading the first section
+    optimizeLCP();
 
     // Load LCP blocks
     await loadSection(main.querySelector('.section'), waitForFirstImage);
