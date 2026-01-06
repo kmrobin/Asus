@@ -34,38 +34,24 @@ function preloadLcpImage(product) {
   if (!product?.images?.length) return;
   
   const lcpImage = product.images[0].url;
-  if (!lcpImage) return;
+  const header = document.querySelector('header');
+  if (!header || !lcpImage) return;
 
-  // Check if image is already preloaded
-  const existingPreload = Array.from(document.head.querySelectorAll('link[rel="preload"][as="image"]'))
-    .find(link => link.href === lcpImage);
-    
-  if (existingPreload) {
-    return; // Skip if already preloaded
-  }
+  const preloadContainer = document.createElement('div');
+  preloadContainer.style.display = 'none';
+  header.appendChild(preloadContainer);
 
-  // Create high-priority preload link for the LCP image
-  const preloadLink = document.createElement('link');
-  preloadLink.rel = 'preload';
-  preloadLink.as = 'image';
-  preloadLink.href = lcpImage;
-  preloadLink.fetchpriority = 'high';
-  document.head.appendChild(preloadLink);
-
-  // Create preload for optimized image format (WebP)
-  const url = new URL(lcpImage);
-  const webpUrl = new URL(lcpImage, window.location);
-  webpUrl.searchParams.set('format', 'webply');
-  webpUrl.searchParams.set('optimize', 'medium');
-  webpUrl.searchParams.set('width', '800');
-  
-  const webpPreload = document.createElement('link');
-  webpPreload.rel = 'preload';
-  webpPreload.as = 'image';
-  webpPreload.href = webpUrl.toString();
-  webpPreload.fetchpriority = 'high';
-  webpPreload.type = 'image/webp';
-  document.head.appendChild(webpPreload);
+  UI.render(Image, {
+    src: lcpImage,
+    ...IMAGES_SIZES,
+    params: {
+      ...IMAGES_SIZES.mobile
+    },
+    loading: 'eager',
+    format: 'auto',
+    fetchpriority: 'high',
+    isDiscoverable: true
+  })(preloadContainer);
 }
 
 export default async function decorate(block) {
@@ -73,7 +59,7 @@ export default async function decorate(block) {
   const product = events._lastEvent?.['pdp/data']?.payload ?? null;
   const labels = await fetchPlaceholders();
 
-  // Preload LCP image
+  // Preload LCP image in header
   preloadLcpImage(product);
 
   // Layout
@@ -120,56 +106,13 @@ export default async function decorate(block) {
   // Alert
   let inlineAlert = null;
 
-  // Render LCP-critical components first (in series) to ensure faster rendering
-  const renderStartTime = performance.now();
-  
-  // Render gallery first as it likely contains the LCP element
-  const _galleryMobile = await pdpRendered.render(ProductGallery, {
-    controls: 'dots', 
-    arrows: true,
-    peak: false,
-    gap: 'small',
-    loop: false,
-    imageParams: {
-      ...IMAGES_SIZES.mobile
-    },
-    isDiscoverable: true,
-    fetchpriority: 'high',
-    loading: 'eager'
-  })($galleryMobile);
-
-  const _gallery = await pdpRendered.render(ProductGallery, {
-    controls: 'thumbnailsColumn',
-    arrows: true,
-    peak: true,
-    gap: 'small', 
-    loop: false,
-    imageParams: {
-      ...IMAGES_SIZES.mobile
-    },
-    isDiscoverable: true,
-    fetchpriority: 'high',
-    loading: 'eager'
-  })($gallery);
-
-  // Then render other LCP-critical components
-  const _header = await pdpRendered.render(ProductHeader, {
-    fetchpriority: 'high',
-    loading: 'eager'
-  })($header);
-
-  const _price = await pdpRendered.render(ProductPrice, {
-    fetchpriority: 'high',
-    loading: 'eager'
-  })($price);
-
-  const _shortDescription = await pdpRendered.render(ProductShortDescription, {
-    fetchpriority: 'high',
-    loading: 'eager'
-  })($shortDescription);
-
-  // Render other components in parallel to speed up the process
+  // Render Containers
   const [
+    _galleryMobile,
+    _gallery,
+    _header,
+    _price,
+    _shortDescription,
     _options,
     _quantity,
     addToCart,
@@ -177,18 +120,45 @@ export default async function decorate(block) {
     _description,
     _attributes,
   ] = await Promise.all([
-    // Configuration - Swatches
-    pdpRendered.render(ProductOptions, { 
-      hideSelectedValue: false,
-      fetchpriority: 'high',
-      loading: 'eager'
-    })($options),
+    // Gallery (Mobile)
+    pdpRendered.render(ProductGallery, {
+      controls: 'dots', 
+      arrows: true,
+      peak: false,
+      gap: 'small',
+      loop: false,
+      imageParams: {
+        ...IMAGES_SIZES.mobile
+      },
+      isDiscoverable: true
+    })($galleryMobile),
 
-    // Configuration - Quantity
-    pdpRendered.render(ProductQuantity, {
-      fetchpriority: 'high',
-      loading: 'eager'
-    })($quantity),
+    // Gallery (Desktop)
+    pdpRendered.render(ProductGallery, {
+      controls: 'thumbnailsColumn',
+      arrows: true,
+      peak: true,
+      gap: 'small', 
+      loop: false,
+      imageParams: {
+        ...IMAGES_SIZES.mobile
+      },isDiscoverable: true
+    })($gallery),
+
+    // Header
+    pdpRendered.render(ProductHeader, {})($header),
+
+    // Price
+    pdpRendered.render(ProductPrice, {})($price),
+
+    // Short Description
+    pdpRendered.render(ProductShortDescription, {})($shortDescription),
+
+    // Configuration - Swatches
+    pdpRendered.render(ProductOptions, { hideSelectedValue: false })($options),
+
+    // Configuration  Quantity
+    pdpRendered.render(ProductQuantity, {})($quantity),
 
     // Configuration – Button - Add to Cart
     UI.render(Button, {
@@ -273,19 +243,12 @@ export default async function decorate(block) {
       },
     })($addToWishlist),
 
-    // Description - non-critical, can load later
-    pdpRendered.render(ProductDescription, {
-      fetchpriority: 'low'
-    })($description),
+    // Description
+    pdpRendered.render(ProductDescription, {})($description),
 
-    // Attributes - non-critical, can load later
-    pdpRendered.render(ProductAttributes, {
-      fetchpriority: 'low'
-    })($attributes),
+    // Attributes
+    pdpRendered.render(ProductAttributes, {})($attributes),
   ]);
-
-  const renderTime = performance.now() - renderStartTime;
-  console.log(`PDP Components rendered in ${renderTime}ms`);
 
   // Lifecycle Events
   events.on('pdp/valid', (valid) => {
