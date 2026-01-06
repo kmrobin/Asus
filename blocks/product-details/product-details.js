@@ -29,7 +29,7 @@ import { fetchPlaceholders } from '../../scripts/aem.js';
 import { IMAGES_SIZES } from '../../scripts/initializers/pdp.js';
 import '../../scripts/initializers/cart.js';
 
-// Enhanced LCP image preloading with better performance
+// Preload LCP image
 function preloadLcpImage(product) {
   if (!product?.images?.length) return;
   
@@ -37,14 +37,10 @@ function preloadLcpImage(product) {
   const header = document.querySelector('header');
   if (!header || !lcpImage) return;
 
-  // Create preload container in header for better resource prioritization
   const preloadContainer = document.createElement('div');
   preloadContainer.style.display = 'none';
-  preloadContainer.style.position = 'absolute';
-  preloadContainer.style.left = '-9999px';
   header.appendChild(preloadContainer);
 
-  // Preload image with highest priority
   UI.render(Image, {
     src: lcpImage,
     ...IMAGES_SIZES,
@@ -52,37 +48,16 @@ function preloadLcpImage(product) {
       ...IMAGES_SIZES.mobile
     },
     loading: 'eager',
+    format: 'auto',
     fetchpriority: 'high',
-    isDiscoverable: true,
-    // Add loading optimization attributes
-    decoding: 'async'
+    isDiscoverable: true
   })(preloadContainer);
-}
-
-// Preload critical assets for product details
-function preloadCriticalAssets() {
-  const criticalAssets = [
-    '/scripts/__dropins__/storefront-pdp/containers/ProductGallery.js',
-    '/scripts/__dropins__/storefront-pdp/containers/ProductHeader.js',
-    '/scripts/__dropins__/storefront-pdp/containers/ProductPrice.js',
-    '/scripts/__dropins__/storefront-pdp/containers/ProductOptions.js'
-  ];
-
-  criticalAssets.forEach(asset => {
-    const link = document.createElement('link');
-    link.rel = 'modulepreload';
-    link.href = asset;
-    document.head.appendChild(link);
-  });
 }
 
 export default async function decorate(block) {
   // eslint-disable-next-line no-underscore-dangle
   const product = events._lastEvent?.['pdp/data']?.payload ?? null;
   const labels = await fetchPlaceholders();
-
-  // Preload critical assets
-  preloadCriticalAssets();
 
   // Preload LCP image in header
   preloadLcpImage(product);
