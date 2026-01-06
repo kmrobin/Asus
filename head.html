@@ -7,6 +7,11 @@
 //estorestage.asus.com/pl/media/catalog/product/5/f/5f19fb20e31034f0f25c0589279a34df.png?auto=webp&quality=80&crop=false&fit=cover&width=177.86458333333334&height=250 1366w,
 //estorestage.asus.com/pl/media/catalog/product/5/f/5f19fb20e31034f0f25c0589279a34df.png?auto=webp&quality=80&crop=false&fit=cover&width=250&height=250 1920w"
       fetchpriority="high">
+<!-- 添加关键CSS的预加载 -->
+<link rel="preload" href="/styles/styles.css" as="style">
+<!-- 添加关键JS的预加载 -->
+<link rel="preload" href="/scripts/aem.js" as="script">
+<link rel="preload" href="/scripts/scripts.js" as="script">
 <script type="speculationrules">
     {
         "prerender": [{
@@ -52,4 +57,3 @@
 <link rel="modulepreload" href="/scripts/__dropins__/tools/preact-compat.js" />
 <link rel="modulepreload" href="/scripts/__dropins__/tools/preact-hooks.js" />
 <link rel="modulepreload" href="/scripts/__dropins__/tools/components.js" />
-<link rel="preconnect" href="https://main--asus--kmrobin.aem.live">
