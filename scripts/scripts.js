@@ -250,8 +250,26 @@ async function loadEager(doc) {
     // Template Decorations
     await applyTemplates(doc);
 
-    // Load LCP blocks
-    await loadSection(main.querySelector('.section'), waitForFirstImage);
+    // Load LCP blocks - 只针对可能的LCP元素进行预加载
+    const lcpSection = main.querySelector('.section');
+    if (lcpSection) {
+      // 预加载首个图像（最可能是LCP元素）
+      const firstImage = lcpSection.querySelector('img[data-src], img[src], picture img');
+      if (firstImage) {
+        const imgSrc = firstImage.dataset.src || firstImage.src;
+        if (imgSrc && !document.head.querySelector(`link[rel="preload"][href="${imgSrc}"]`)) {
+          const link = document.createElement('link');
+          link.rel = 'preload';
+          link.as = 'image';
+          link.href = imgSrc;
+          link.fetchpriority = 'high';
+          document.head.appendChild(link);
+        }
+      }
+      
+      // 加载LCP区域
+      await loadSection(lcpSection, waitForFirstImage);
+    }
     document.body.classList.add('appear');
   }
 

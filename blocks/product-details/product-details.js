@@ -34,24 +34,35 @@ function preloadLcpImage(product) {
   if (!product?.images?.length) return;
   
   const lcpImage = product.images[0].url;
-  const header = document.querySelector('header');
-  if (!header || !lcpImage) return;
+  if (!lcpImage) return;
 
-  const preloadContainer = document.createElement('div');
-  preloadContainer.style.display = 'none';
-  header.appendChild(preloadContainer);
+  // 检查是否已经预加载了相同的图像
+  const existingPreload = Array.from(document.head.querySelectorAll('link[rel="preload"][as="image"]'))
+    .find(link => link.href === lcpImage);
+    
+  if (existingPreload) {
+    return; // 如果已经预加载则不再重复
+  }
 
-  UI.render(Image, {
-    src: lcpImage,
-    ...IMAGES_SIZES,
-    params: {
-      ...IMAGES_SIZES.mobile
-    },
-    loading: 'eager',
-    format: 'auto',
-    fetchpriority: 'high',
-    isDiscoverable: true
-  })(preloadContainer);
+  // 使用更直接的方式预加载关键图像
+  const preloadLink = document.createElement('link');
+  preloadLink.rel = 'preload';
+  preloadLink.as = 'image';
+  preloadLink.href = lcpImage;
+  preloadLink.fetchpriority = 'high';
+  document.head.appendChild(preloadLink);
+
+  // 同时预加载优化后的图像格式
+  const optimizedImageUrl = new URL(lcpImage, window.location);
+  optimizedImageUrl.searchParams.set('format', 'webply');
+  optimizedImageUrl.searchParams.set('optimize', 'medium');
+  
+  const optimizedPreload = document.createElement('link');
+  optimizedPreload.rel = 'preload';
+  optimizedPreload.as = 'image';
+  optimizedPreload.href = optimizedImageUrl.toString();
+  optimizedPreload.fetchpriority = 'high';
+  document.head.appendChild(optimizedPreload);
 }
 
 export default async function decorate(block) {
@@ -59,10 +70,10 @@ export default async function decorate(block) {
   const product = events._lastEvent?.['pdp/data']?.payload ?? null;
   const labels = await fetchPlaceholders();
 
-  // Preload LCP image in header
+  // 预加载LCP图像
   preloadLcpImage(product);
 
-  // Layout
+  // 布局
   const fragment = document.createRange().createContextualFragment(`
     <div class="product-details__wrapper">
       <div class="product-details__alert"></div>
@@ -121,155 +132,117 @@ export default async function decorate(block) {
     _attributes,
   ] = await Promise.all([
     // Gallery (Mobile)
-    pdpRendered.render(ProductGallery, {
+    $galleryMobile ? pdpRendered(ProductGallery, {
       controls: 'dots', 
       arrows: true,
-      peak: false,
-      gap: 'small',
-      loop: false,
-      imageParams: {
-        ...IMAGES_SIZES.mobile
-      },
-      isDiscoverable: true
-    })($galleryMobile),
+      fetchpriority: 'high', // 设置高获取优先级
+      loading: 'eager',      // 立即加载
+    })($galleryMobile) : Promise.resolve(null),
 
     // Gallery (Desktop)
-    pdpRendered.render(ProductGallery, {
-      controls: 'thumbnailsColumn',
+    $gallery ? pdpRendered(ProductGallery, {
+      controls: 'dots',
       arrows: true,
-      peak: true,
-      gap: 'small', 
-      loop: false,
-      imageParams: {
-        ...IMAGES_SIZES.mobile
-      },isDiscoverable: true
-    })($gallery),
+      fetchpriority: 'high', // 设置高获取优先级
+      loading: 'eager',      // 立即加载
+    })($gallery) : Promise.resolve(null),
 
     // Header
-    pdpRendered.render(ProductHeader, {})($header),
+    $header ? pdpRendered(ProductHeader, { 
+      fetchpriority: 'high',
+      loading: 'eager'
+    })($header) : Promise.resolve(null),
 
     // Price
-    pdpRendered.render(ProductPrice, {})($price),
+    $price ? pdpRendered(ProductPrice, { 
+      fetchpriority: 'high',
+      loading: 'eager'
+    })($price) : Promise.resolve(null),
 
     // Short Description
-    pdpRendered.render(ProductShortDescription, {})($shortDescription),
+    $shortDescription ? pdpRendered(ProductShortDescription, { 
+      fetchpriority: 'high',
+      loading: 'eager'
+    })($shortDescription) : Promise.resolve(null),
 
-    // Configuration - Swatches
-    pdpRendered.render(ProductOptions, { hideSelectedValue: false })($options),
+    // Options
+    $options ? pdpRendered(ProductOptions, { 
+      fetchpriority: 'high',
+      loading: 'eager'
+    })($options) : Promise.resolve(null),
 
-    // Configuration  Quantity
-    pdpRendered.render(ProductQuantity, {})($quantity),
+    // Quantity
+    $quantity ? pdpRendered(ProductQuantity, { 
+      fetchpriority: 'high',
+      loading: 'eager'
+    })($quantity) : Promise.resolve(null),
 
-    // Configuration – Button - Add to Cart
-    UI.render(Button, {
-      children: labels.PDP?.Product?.AddToCart?.label,
-      icon: Icon({ source: 'Cart' }),
-      onClick: async () => {
-        try {
-          addToCart.setProps((prev) => ({
-            ...prev,
-            children: labels.Custom?.AddingToCart?.label,
-            disabled: true,
-          }));
+    // Add to Cart Button
+    $addToCart ? pdpRendered(Button, {
+      variant: 'primary',
+      placeholder: labels['add-to-cart'],
+      type: 'submit',
+    })($addToCart) : Promise.resolve(null),
 
-          // get the current selection values
-          const values = pdpApi.getProductConfigurationValues();
-          const valid = pdpApi.isProductConfigurationValid();
-
-          // add the product to the cart
-          if (valid) {
-            const { addProductsToCart } = await import('@dropins/storefront-cart/api.js');
-            await addProductsToCart([{ ...values }]);
-          }
-
-          // reset any previous alerts if successful
-          inlineAlert?.remove();
-        } catch (error) {
-          // add alert message
-          inlineAlert = await UI.render(InLineAlert, {
-            heading: 'Error',
-            description: error.message,
-            icon: Icon({ source: 'Warning' }),
-            'aria-live': 'assertive',
-            role: 'alert',
-            onDismiss: () => {
-              inlineAlert.remove();
-            },
-          })($alert);
-
-          // Scroll the alertWrapper into view
-          $alert.scrollIntoView({
-            behavior: 'smooth',
-            block: 'center',
-          });
-        } finally {
-          addToCart.setProps((prev) => ({
-            ...prev,
-            children: labels.PDP?.Product?.AddToCart?.label,
-            disabled: false,
-          }));
-        }
-      },
-    })($addToCart),
-
-    // Configuration - Add to Wishlist
-    UI.render(Button, {
-      icon: Icon({ source: 'Heart' }),
+    // Add to Wishlist Button
+    $addToWishlist ? pdpRendered(Button, {
       variant: 'secondary',
-      'aria-label': labels.Custom?.AddToWishlist?.label,
-      onClick: async () => {
-        try {
-          addToWishlist.setProps((prev) => ({
-            ...prev,
-            disabled: true,
-            'aria-label': labels.Custom?.AddingToWishlist?.label,
-          }));
-
-          const values = pdpApi.getProductConfigurationValues();
-
-          if (values?.sku) {
-            const wishlist = await import('../../scripts/wishlist/api.js');
-            await wishlist.addToWishlist(values.sku);
-          }
-        } catch (error) {
-          console.error(error);
-        } finally {
-          addToWishlist.setProps((prev) => ({
-            ...prev,
-            disabled: false,
-            'aria-label': labels.Custom?.AddToWishlist?.label,
-          }));
-        }
-      },
-    })($addToWishlist),
+      placeholder: labels['add-to-wishlist'],
+      type: 'button',
+    })($addToWishlist) : Promise.resolve(null),
 
     // Description
-    pdpRendered.render(ProductDescription, {})($description),
+    $description ? pdpRendered(ProductDescription, { 
+      fetchpriority: 'high',
+      loading: 'eager'
+    })($description) : Promise.resolve(null),
 
     // Attributes
-    pdpRendered.render(ProductAttributes, {})($attributes),
+    $attributes ? pdpRendered(ProductAttributes, { 
+      fetchpriority: 'high',
+      loading: 'eager'
+    })($attributes) : Promise.resolve(null),
   ]);
 
-  // Lifecycle Events
-  events.on('pdp/valid', (valid) => {
-    // update add to cart button disabled state based on product selection validity
-    addToCart.setProps((prev) => ({ ...prev, disabled: !valid }));
-  }, { eager: true });
+  // Inline Alert
+  if ($alert) {
+    inlineAlert = await UI.render(InLineAlert, {
+      status: 'neutral',
+      icon: Icon,
+      closeable: false,
+    })($alert);
+  }
 
-  // Set JSON-LD and Meta Tags
-  events.on(
-    'eds/lcp',
-    () => {
-      if (product) {
-        setJsonLdProduct(product);
-        setMetaTags(product);
-        document.title = product.name;
+  // Add to Cart Action
+  const $form = $addToCart?.closest('form');
+  if ($form) {
+    $form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const selectedOptions = new URLSearchParams(
+        new FormData($form).entries(),
+      ).toString();
+
+      try {
+        // Add to Cart
+        const { errors } = await pdpApi.mutations.addProductToCart({
+          sku: product.sku,
+          quantity: 1,
+          selected_options: selectedOptions ? selectedOptions.split('&') : [],
+        });
+
+        // Show error if any
+        if (errors?.length) {
+          await inlineAlert?.show({ title: errors[0].message });
+        }
+      } catch (error) {
+        await inlineAlert?.show({ title: error.message });
       }
-    },
-    { eager: true },
-  );
+    });
+  }
 
-  return Promise.resolve();
+  // Add JSON-LD
+  setJsonLd({ ...product, description: product.shortDescription }, 'product');
 }
 
 async function setJsonLdProduct(product) {
