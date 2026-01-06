@@ -40,31 +40,10 @@ class ProductCard extends Component {
     url.protocol = 'https:';
     url.search = '';
 
-    // 优化：根据图像在页面中的位置确定加载优先级
-    const isLCPImage = this.props.index < 2; // 假设前两个图像是LCP元素
-    const fetchPriority = isLCPImage ? 'high' : 'auto';
-    const imageLoading = this.props.index < 2 ? 'eager' : 'lazy'; // 只对前2个图像使用eager加载，避免资源竞争
-
-    // 预加载LCP相关的图像
-    if (isLCPImage) {
-      // 检查图像是否已经预加载
-      const existingPreload = Array.from(document.head.querySelectorAll('link[rel="preload"][as="image"]'))
-        .find(link => link.href === url.toString());
-        
-      if (!existingPreload) {
-        const preloadLink = document.createElement('link');
-        preloadLink.rel = 'preload';
-        preloadLink.as = 'image';
-        preloadLink.href = url.toString();
-        preloadLink.fetchpriority = 'high';
-        document.head.appendChild(preloadLink);
-      }
-    }
-
     return html`<picture>
       <source type="image/webp" srcset="${url}?width=163&bg-color=255,255,255&format=webply&optimize=medium 1x,${url}?width=326&bg-color=255,255,255&format=webply&optimize=medium 2x, ${url}?width=489&bg-color=255,255,255&format=webply&optimize=medium 3x" media="(max-width: 900px)" />
       <source type="image/webp" srcset="${url}?width=330&bg-color=255,255,255&format=webply&optimize=medium 1x, ${url}?width=660&bg-color=255,255,255&format=webply&optimize=medium 2x, ${url}?width=990&bg-color=255,255,255&format=webply&optimize=medium 3x" />
-      <img class="product-image-photo" src="${url}?width=330&quality=100&bg-color=255,255,255" max-width="330" max-height="396" alt=${product.name} loading=${imageLoading} fetchpriority=${fetchPriority} />
+      <img class="product-image-photo" src="${url}?width=330&quality=100&bg-color=255,255,255" max-width="330" max-height="396" alt=${product.name} loading=${loading} />
     </picture>`;
   }
 
@@ -95,20 +74,46 @@ class ProductCard extends Component {
     }
 
     const isMobile = window.matchMedia('only screen and (max-width: 900px)').matches;
-    const numberOfEagerImages = isMobile ? 2 : 2; // 减少eager加载的图片数量，避免资源竞争
+    const numberOfEagerImages = isMobile ? 2 : 4;
 
     return html`
       <li index=${index} ref=${secondLastProduct}>
-        <a href="${product.url}" onClick=${() => this.onProductClick(product)}>
-          ${this.renderImage(index < numberOfEagerImages ? 'eager' : 'lazy')}
-          <div class="name">${product.name}</div>
-          <div class="price">${renderPrice(product, this.formatter)}</div>
-          <div class="rating">
-            <span class="rating-stars" style="width: ${product.rating_summary?.average * 20}%"></span>
-          </div>
-        </a>
+        <div class="picture">
+          <a onClick=${() => this.onProductClick(product)} href="/products/${product.urlKey}/${product.sku}">
+            ${this.renderImage(index < numberOfEagerImages ? 'eager' : 'lazy')}
+          </a>
+        </div>
+        <div class="name">
+          <a onClick=${() => this.onProductClick(product)} href="/products/${product.urlKey}/${product.sku}" dangerouslySetInnerHTML=${{__html: product.name}} />
+        </div>
+        <div class="price">${renderPrice(product, this.formatter.format, html, Fragment)}</div>
       </li>`;
   }
 }
 
-export default ProductCard;
+const ProductList = ({
+  products, loading, currentPageSize, secondLastProduct,
+}) => {
+  if (loading) {
+    return html`<div class="list">
+      <ol>
+        ${Array(currentPageSize).fill().map(() => html`<${ProductCard} loading=${true} />`)}
+      </ol>
+    </div>`;
+  }
+
+  if (products.items.length === 0) {
+    return html`<div class="list">
+      <div class="empty">We're sorry, we couldn't find anything that matches your query.</div>
+    </div>`;
+  }
+
+  const gridItems = products.items.map((product, index) => html`<${ProductCard} key=${product.sku} product=${product} index=${index} secondLastProduct=${index === products.items.length - 2 ? secondLastProduct : null} />`);
+  return html`<div class="list">
+    <ol>
+        ${gridItems}
+    </ol>
+  </div>`;
+};
+
+export default ProductList;

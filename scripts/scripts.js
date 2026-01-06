@@ -158,10 +158,6 @@ function preloadFile(href, as) {
   link.as = as;
   link.crossOrigin = 'anonymous';
   link.href = href;
-  // 为关键资源添加高优先级
-  if (as === 'script' || as === 'style') {
-    link.fetchpriority = 'high';
-  }
   document.head.appendChild(link);
 }
 
@@ -254,26 +250,8 @@ async function loadEager(doc) {
     // Template Decorations
     await applyTemplates(doc);
 
-    // Load LCP blocks - 优化加载逻辑，只预加载真正的LCP图像
-    const lcpSection = main.querySelector('.section');
-    if (lcpSection) {
-      // 只预加载可能的LCP图像，避免预加载过多图像
-      const firstImage = lcpSection.querySelector('img[data-src], img[src], picture img');
-      if (firstImage) {
-        const imgSrc = firstImage.dataset.src || firstImage.src;
-        if (imgSrc) {
-          const link = document.createElement('link');
-          link.rel = 'preload';
-          link.as = 'image';
-          link.href = imgSrc;
-          link.fetchpriority = 'high';
-          document.head.appendChild(link);
-        }
-      }
-      
-      // 加载LCP区域
-      await loadSection(lcpSection, waitForFirstImage);
-    }
+    // Load LCP blocks
+    await loadSection(main.querySelector('.section'), waitForFirstImage);
     document.body.classList.add('appear');
   }
 
