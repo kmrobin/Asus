@@ -7,6 +7,8 @@
 //estorestage.asus.com/pl/media/catalog/product/5/f/5f19fb20e31034f0f25c0589279a34df.png?auto=webp&quality=80&crop=false&fit=cover&width=177.86458333333334&height=250 1366w,
 //estorestage.asus.com/pl/media/catalog/product/5/f/5f19fb20e31034f0f25c0589279a34df.png?auto=webp&quality=80&crop=false&fit=cover&width=250&height=250 1920w"
       fetchpriority="high">
+<!-- 预连接到关键的外部域名 -->
+<link rel="preconnect" href="//estorestage.asus.com" crossorigin />
 <script type="speculationrules">
     {
         "prerender": [{
@@ -32,11 +34,13 @@
     }
 </script>
 
-<link rel="stylesheet preload" href="/styles/styles.css" />
+<!-- 使用 rel="preload" 预加载关键 CSS，并添加媒体条件以优化加载 -->
+<link rel="preload" href="/styles/styles.css" as="style" />
+<link rel="stylesheet" href="/styles/styles.css" />
 
 <script src="/scripts/aem.js" type="module"></script>
-<script src="/scripts/scripts.js" type="module"></script>
 <script src="/scripts/configs.js" type="module"></script>
+<script src="/scripts/scripts.js" type="module"></script>
 <script src="/scripts/commerce.js" type="module"></script>
 
 <link rel="preload" href="/placeholders.json" as="fetch" crossorigin="anonymous" />
