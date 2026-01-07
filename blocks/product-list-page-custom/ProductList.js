@@ -21,7 +21,7 @@ class ProductCard extends Component {
     this.baseProduct = props.product;
   }
 
-  renderImage(loading = 'lazy') {
+  renderImage(loading = 'eager') {
     const { product } = this.props;
 
     // Placeholder as fallback
@@ -80,7 +80,7 @@ class ProductCard extends Component {
       <li index=${index} ref=${secondLastProduct}>
         <div class="picture">
           <a onClick=${() => this.onProductClick(product)} href="/products/${product.urlKey}/${product.sku}">
-            ${this.renderImage(index < numberOfEagerImages ? 'eager' : 'lazy')}
+            ${this.renderImage(index < numberOfEagerImages ? 'eager' : 'eager')}
           </a>
         </div>
         <div class="name">
