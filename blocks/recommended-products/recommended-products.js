@@ -15,7 +15,7 @@ export default async function decorate(block) {
 
   initCards.forEach((item, index) => {
     const pic = createOptimizedPicture(item.image, item.name, true, [{ width: '710' }]);
-    pic.querySelector('img').setAttribute('loading', 'eager');
+    pic.querySelector('img').setAttribute('loading', 'lazy');
     pic.querySelector('img').width = '710';
     pic.querySelector('img').height = '485';
     cards.push(jsx`
