@@ -98,16 +98,7 @@ function renderItem(unitId, product) {
   };
 
   const ctaText = product.__typename === 'SimpleProductView' ? 'Add to Cart' : 'Select Options';
-  const item = document.createRange().createContextualFragment(`<div class="product-grid-item">
-    <a href="/products/${product.urlKey}/${product.sku}">
-      <picture>
-        <source type="image/webp" srcset="${image}?width=300&format=webply&optimize=medium" />
-        <img loading="lazy" alt="Image of ${product.name}" width="300" height="375" src="${image}?width=300&format=jpg&optimize=medium" />
-      </picture>
-      <span>${product.name}</span>
-    </a>
-    <span class="product-grid-cta"></span>
-  </div>`);
+  const item = document.createRange().createContextualFragment(``);
   item.querySelector('a').addEventListener('click', clickHandler);
   const buttonEl = item.querySelector('.product-grid-cta');
   UI.render(Button, {
