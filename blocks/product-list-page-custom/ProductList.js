@@ -80,7 +80,7 @@ class ProductCard extends Component {
       <li index=${index} ref=${secondLastProduct}>
         <div class="picture">
           <a onClick=${() => this.onProductClick(product)} href="/products/${product.urlKey}/${product.sku}">
-            ${this.renderImage(index < numberOfEagerImages ? 'eager' : 'eager')}
+            ${this.renderImage(index < numberOfEagerImages ? 'eager' : 'lazy')}
           </a>
         </div>
         <div class="name">
