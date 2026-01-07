@@ -18,7 +18,16 @@ export default async function decorate(block) {
     pic.querySelector('img').setAttribute('loading', 'lazy');
     pic.querySelector('img').width = '710';
     pic.querySelector('img').height = '485';
-    cards.push(jsx``);
+    cards.push(jsx`
+      <div class="slider-item ${index === activeIndex ? 'active' : ''}">
+        <div class="slider-image">
+          <a href="${item.path}"><div class="image-wrapper">${pic.outerHTML}</div></a>
+        </div>
+        <div class="slider-text">
+          <a href="${item.path}">${item.name}</a>
+        </div>
+      </div>
+    `);
   });
 
   block.innerHTML = jsx`<section class="slider">
