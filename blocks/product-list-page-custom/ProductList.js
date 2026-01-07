@@ -21,7 +21,7 @@ class ProductCard extends Component {
     this.baseProduct = props.product;
   }
 
-  renderImage(loading = 'eager') {
+  renderImage(loading = 'lazy') {
     const { product } = this.props;
 
     // Placeholder as fallback
